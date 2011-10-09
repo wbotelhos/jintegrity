@@ -53,7 +53,7 @@ public class DbUnitManager {
 		final String username	= propertiesValue.getUsername();
 		final String password	= propertiesValue.getPassword();
 
-		LOG.info("using connection configuration as: " + driver + "[\"" + url + "\", \"" + username + "\", \"" + password + "\"]");
+		LOG.info("using connection configuration as: " + driver + "['" + url + "', '" + username + "', '" + password + "']");
 
 		Connection connection = null;
 
@@ -61,13 +61,13 @@ public class DbUnitManager {
 			Class.forName(driver).newInstance();
 			connection = DriverManager.getConnection(url, username, password);
 		} catch (ClassNotFoundException e) {
-			throw new JIntegrityException("the driver \"" + driver + "\" was not found!", e);
+			throw new JIntegrityException("the driver '" + driver + "' was not found!", e);
 		} catch (InstantiationException e) {
 			throw new JIntegrityException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
 			throw new JIntegrityException(e.getMessage(), e);
 		} catch (SQLException e) {
-			throw new JIntegrityException("Could not establish connection on \"" + url + "\" to \"" + username + "\"!", e);
+			throw new JIntegrityException("Could not establish connection on '" + url + "' to '" + username + "'!", e);
 		}
 
 		return connection;
@@ -95,14 +95,14 @@ public class DbUnitManager {
 			InputStream XMLStream = getClass().getResourceAsStream(xml);
 
 			if (XMLStream == null) {
-				throw new JIntegrityException("the file \"" + xml + "\" was not found!");
+				throw new JIntegrityException("the file '" + xml + "' was not found!");
 			}
 
 			IDatabaseConnection iConn = getDbUnitConnection();
 
 			FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
 
-			LOG.info("building \"" + xml + "\"");
+			LOG.info("building '" + xml + "'");
 			IDataSet dataSet = builder.build(XMLStream);
 
 			operation.execute(iConn, dataSet);
@@ -111,7 +111,7 @@ public class DbUnitManager {
 		} catch (JIntegrityException e) {
 			throw new JIntegrityException(e.getMessage(), e);
 		} catch (NoSuchTableException e) {
-			throw new JIntegrityException("the table \"" + e.getMessage() + "\" was not found!", e);
+			throw new JIntegrityException("the table '" + e.getMessage() + "' was not found!", e);
 		} catch (DatabaseUnitException e) {
 			throw new JIntegrityException(e.toString(), e);
 		} catch (SQLException e) {

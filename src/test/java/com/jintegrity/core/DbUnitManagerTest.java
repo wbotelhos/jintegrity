@@ -172,7 +172,7 @@ public class DbUnitManagerTest {
 			dbUnitManager.execute(DatabaseOperation.CLEAN_INSERT, xml);
 		} catch (JIntegrityException e) {
 			// then
-			assertEquals("the file \"/MISSING.xml\" was not found!", e.getMessage());
+			assertEquals("the file '/MISSING.xml' was not found!", e.getMessage());
 		}
 
 		sqlHelper.run("drop");

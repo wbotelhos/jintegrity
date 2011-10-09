@@ -477,7 +477,7 @@ public class JIntegrityTest {
 			fail("exception expected but not thrown!");
 		} catch (JIntegrityException e) {
 			// then
-			assertEquals("the \"MISSING\" driver factory is not supported!", e.getMessage());
+			assertEquals("the 'MISSING' driver factory is not supported!", e.getMessage());
 		}
 	}
 

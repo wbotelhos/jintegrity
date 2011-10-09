@@ -103,8 +103,8 @@ public class JIntegrity {
 		} else if (vendor.equals(MSSQL)) {
 			dbUnitManager = new MsSqlServerDbUnitManager(propertiesKey);
 		} else {
-			LOG.error("the \"" + vendor + "\" driver factory is not supported yet!");
-			throw new JIntegrityException("the \"" + vendor + "\" driver factory is not supported!");
+			LOG.error("the '" + vendor + "' driver factory is not supported yet!");
+			throw new JIntegrityException("the '" + vendor + "' driver factory is not supported!");
 		}
 
 		return this;
