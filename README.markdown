@@ -65,6 +65,24 @@ The jIntegrity is licensed under [The MIT License](http://www.opensource.org/lic
 
 + If you don't need anything specific from JIntegrity object, you can instantiate the ```DbUnitManager``` directly.
 
+### Using JPA
+
+	EntityManager manager = JPAHelper.currentEntityManager();
+	Query query = manager.createQuery("from User");
+	List<User> userList = query.getResultList(); 
+
+### Using Hibernate
+
+	Session session = HibernateHelper.currentSession();
+	Criteria criteria = session.createCriteria(User.class);
+	List<User> userList = criteria.list();
+
+### Exporting schema from models
+
+	HibernateHelper.exportSchema();
+
++ You need especify the mappings on hibernate.cfg.xml. Ex.: ```<mapping class="com.jintegrity.model.User" />```
+
 ## JIntegrity Methods
 
 	String helper.getPath();
@@ -109,6 +127,19 @@ The jIntegrity is licensed under [The MIT License](http://www.opensource.org/lic
 	Connection dbUnitManager.getConnection();
 
 	void dbUnitManager.execute(DatabaseOperation operation, String xml);
+
+## JPA Helpers Methods
+
+	EntityManagerFactory entityManagerFactory(String name);
+	EntityManager currentEntityManager();
+	void close();
+
+## Hibernate Helpers Methods
+
+	SessionFactory sessionFactory();
+	Session currentSession();
+	void close();
+	void exportSchema();
 
 ## More
 
