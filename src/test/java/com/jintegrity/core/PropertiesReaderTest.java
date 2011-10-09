@@ -24,9 +24,9 @@ public class PropertiesReaderTest {
 
 		// then
 		assertEquals("should found the default driver value", "org.hsqldb.jdbcDriver", propertiesValue.getDriver());
-		assertEquals("should found the default url value", "jdbc:hsqldb:mem:jintegrity", propertiesValue.getUrl());
-		assertEquals("should found the default user value", "root", propertiesValue.getUsername());
-		assertEquals("should found the default password value", "root", propertiesValue.getPassword());
+		assertEquals("should found the default url value", "jdbc:hsqldb:mem:test", propertiesValue.getUrl());
+		assertEquals("should found the default user value", "sa", propertiesValue.getUsername());
+		assertEquals("should found the default password value", "", propertiesValue.getPassword());
 	}
 
 	@Test

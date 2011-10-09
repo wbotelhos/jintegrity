@@ -116,8 +116,8 @@ public class DbUnitManagerTest {
 		// then
 		assertNotNull("should exist a connection", conn);
 		assertEquals("should found the default driver value", "HSQL Database Engine Driver", metaData.getDriverName());
-		assertEquals("should found the default url value", "jdbc:hsqldb:mem:jintegrity", metaData.getURL());
-		assertEquals("should found the default user value", "root", metaData.getUserName());
+		assertEquals("should found the default url value", "jdbc:hsqldb:mem:test", metaData.getURL());
+		assertEquals("should found the default user value", "SA", metaData.getUserName());
 	}
 
 	@Test
@@ -135,8 +135,8 @@ public class DbUnitManagerTest {
 		// then
 		assertNotNull("should exist a connection", conn);
 		assertEquals("should found the default driver value", "HSQL Database Engine Driver", metaData.getDriverName());
-		assertEquals("should found the default url value", "jdbc:hsqldb:mem:jintegrity", metaData.getURL());
-		assertEquals("should found the default user value", "root", metaData.getUserName());
+		assertEquals("should found the default url value", "jdbc:hsqldb:mem:test", metaData.getURL());
+		assertEquals("should found the default user value", "SA", metaData.getUserName());
 	}
 
 	@Test
@@ -155,8 +155,8 @@ public class DbUnitManagerTest {
 		// then
 		assertNotNull("should exist a connection", conn);
 		assertEquals("should found the default driver value", "HSQL Database Engine Driver", metaData.getDriverName());
-		assertEquals("should found the default url value", "jdbc:hsqldb:mem:jintegrity", metaData.getURL());
-		assertEquals("should found the default user value", "root", metaData.getUserName());
+		assertEquals("should found the default url value", "jdbc:hsqldb:mem:test", metaData.getURL());
+		assertEquals("should found the default user value", "SA", metaData.getUserName());
 	}
 
 	@Test
