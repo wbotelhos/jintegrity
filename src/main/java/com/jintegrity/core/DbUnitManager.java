@@ -88,6 +88,10 @@ public class DbUnitManager {
 				xml = "/" + xml;
 			}
 
+			if (!xml.endsWith(".xml")) {
+				xml += ".xml";
+			}
+
 			InputStream XMLStream = getClass().getResourceAsStream(xml);
 
 			if (XMLStream == null) {

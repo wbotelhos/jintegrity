@@ -23,7 +23,47 @@ public class DbUnitManagerTest {
 	private final SQLHelper sqlHelper = new SQLHelper();
 
 	@Test
-	public void shouldIgonreTheFirstSlashIfTheFileHasIt() throws Exception {
+	public void shouldIgonreTheXmlExtensionIfTheFileHasIt() throws Exception {
+		sqlHelper.run("drop", "create");
+
+		// given
+		DbUnitManager dbUnitManager = new DbUnitManager();
+
+		String xml = "User";
+
+		// when
+		dbUnitManager.insert(xml);
+
+		List<User> userList = loadAll(dbUnitManager);
+
+		// then
+		assertEquals("should have 3 registers", 3, userList.size());
+
+		sqlHelper.run("drop");
+	}
+
+	@Test
+	public void shouldAppendXmlExtensionIfTheFileNameHasNot() throws Exception {
+		sqlHelper.run("drop", "create");
+
+		// given
+		DbUnitManager dbUnitManager = new DbUnitManager();
+
+		String xml = "User";
+
+		// when
+		dbUnitManager.insert(xml);
+
+		List<User> userList = loadAll(dbUnitManager);
+
+		// then
+		assertEquals("should have 3 registers", 3, userList.size());
+
+		sqlHelper.run("drop");
+	}
+
+	@Test
+	public void shouldIgnoreTheFirstSlashIfTheFileHasIt() throws Exception {
 		sqlHelper.run("drop", "create");
 
 		// given
@@ -49,7 +89,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User.xml";
+		String xml = "User";
 
 		// when
 		dbUnitManager.insert(xml);
@@ -125,7 +165,7 @@ public class DbUnitManagerTest {
 
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
-		String xml = "MISSING.xml";
+		String xml = "MISSING";
 
 		try {
 			// when
@@ -145,7 +185,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User.xml";
+		String xml = "User";
 
 		// when
 		dbUnitManager.execute(DatabaseOperation.CLEAN_INSERT, xml);
@@ -162,7 +202,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User.xml";
+		String xml = "User";
 
 		// when
 		dbUnitManager.insert(xml);
@@ -188,7 +228,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User.xml";
+		String xml = "User";
 
 		// when
 		dbUnitManager.deleteAll(xml);
@@ -208,7 +248,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User.xml";
+		String xml = "User";
 
 		// when
 		dbUnitManager.cleanAndInsert(xml);
@@ -235,7 +275,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "refresh.xml";
+		String xml = "refresh";
 
 		// when
 		dbUnitManager.refresh(xml);
@@ -276,7 +316,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "update.xml";
+		String xml = "update";
 
 		// when
 		dbUnitManager.refresh(xml);
@@ -317,7 +357,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "delete.xml";
+		String xml = "delete";
 
 		// when
 		dbUnitManager.delete(xml);
@@ -344,7 +384,7 @@ public class DbUnitManagerTest {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User.xml";
+		String xml = "User";
 
 		// when
 		dbUnitManager.truncate(xml);

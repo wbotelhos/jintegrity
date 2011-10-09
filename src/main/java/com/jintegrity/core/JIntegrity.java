@@ -134,7 +134,7 @@ public class JIntegrity {
 				path = "";
 			}
 
-			dbUnitManager.deleteAll(path + xmls[i] + ".xml");
+			dbUnitManager.deleteAll(path + xmls[i]);
 		}
 
 		return this;
@@ -148,7 +148,7 @@ public class JIntegrity {
 				path = "";
 			}
 
-			dbUnitManager.insert(path + xmls[i] + ".xml");
+			dbUnitManager.insert(path + xmls[i]);
 		}
 
 		return this;
