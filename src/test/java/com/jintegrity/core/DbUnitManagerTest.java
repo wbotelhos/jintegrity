@@ -23,6 +23,46 @@ public class DbUnitManagerTest {
 	private final SQLHelper sqlHelper = new SQLHelper();
 
 	@Test
+	public void shouldIgonreTheFirstSlashIfTheFileHasIt() throws Exception {
+		sqlHelper.run("drop", "create");
+
+		// given
+		DbUnitManager dbUnitManager = new DbUnitManager();
+
+		String xml = "/User";
+
+		// when
+		dbUnitManager.insert(xml);
+
+		List<User> userList = loadAll(dbUnitManager);
+
+		// then
+		assertEquals("should have 3 registers", 3, userList.size());
+
+		sqlHelper.run("drop");
+	}
+
+	@Test
+	public void shouldPrependTheFirstSlashIfTheFileHasNot() throws Exception {
+		sqlHelper.run("drop", "create");
+
+		// given
+		DbUnitManager dbUnitManager = new DbUnitManager();
+
+		String xml = "User.xml";
+
+		// when
+		dbUnitManager.insert(xml);
+
+		List<User> userList = loadAll(dbUnitManager);
+
+		// then
+		assertEquals("should have 3 registers", 3, userList.size());
+
+		sqlHelper.run("drop");
+	}
+
+	@Test
 	public void shouldGetConnectionWithDefaultPropertiesKey() throws Exception {
 		// given
 
