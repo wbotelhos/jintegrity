@@ -67,6 +67,7 @@ The jIntegrity is licensed under [The MIT License](http://www.opensource.org/lic
 
 ### Using JPA
 
+	JPAHelper.entityManagerFactory("default");
 	EntityManager manager = JPAHelper.currentEntityManager();
 	Query query = manager.createQuery("from User");
 	List<User> userList = query.getResultList(); 

@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.jintegrity.model.User;
@@ -18,6 +19,11 @@ import com.jintegrity.model.User;
 public class JPAHelperTest {
 
 	private final SQLHelper sqlHelper = new SQLHelper();
+
+	@BeforeClass
+	public static void beforeClass() {
+		JPAHelper.entityManagerFactory("default");
+	}
 
 	@Test
 	public void shouldGetTheSameManager() throws Exception {
