@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+	<Contact id="1" phone="11111111" user_id="1" />
+	<Contact id="2" phone="22222222" user_id="2" />
+	<Contact id="3" phone="33333333" user_id="3" />
+</dataset>

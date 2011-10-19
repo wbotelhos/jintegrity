@@ -1,0 +1,5 @@
+-- HSQL
+INSERT INTO Contact VALUES (1, '11111111', 1), (2, '22222222', 2), (3, '33333333', 3);
+
+-- MySQL
+--INSERT INTO Contact VALUES (1, '11111111', 1), (2, '22222222', 2), (3, '33333333', 3);

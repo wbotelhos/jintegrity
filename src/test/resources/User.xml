@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<dataset>
-	<User id="1" email="email-1@mail.com" name="name-1" />
-	<User id="2" email="email-2@mail.com" name="name-2" />
-	<User id="3" email="email-3@mail.com" name="name-3" />
-</dataset>
