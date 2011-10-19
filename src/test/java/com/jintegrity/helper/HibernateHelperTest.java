@@ -1,6 +1,9 @@
 package com.jintegrity.helper;
 
-import static com.jintegrity.util.Utils.loadAll;
+import static com.jintegrity.util.Utils.createAll;
+import static com.jintegrity.util.Utils.dropAll;
+import static com.jintegrity.util.Utils.insertAll;
+import static com.jintegrity.util.Utils.loadAllUsers;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -11,6 +14,8 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.jintegrity.core.DbUnitManager;
@@ -18,7 +23,15 @@ import com.jintegrity.model.User;
 
 public class HibernateHelperTest {
 
-	private final SQLHelper sqlHelper = new SQLHelper();
+	@Before
+	public void setup() throws Exception {
+		createAll();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		dropAll();
+	}
 
 	@Test
 	public void shouldGetTheSameSession() throws Exception {
@@ -60,7 +73,7 @@ public class HibernateHelperTest {
 
 	@Test
 	public void shouldLoadAll() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
 		Session session = HibernateHelper.currentSession();
@@ -80,28 +93,22 @@ public class HibernateHelperTest {
 		assertEquals("should be the first register", 1, first.getId().intValue());
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldExportSchema() throws Exception {
-		sqlHelper.run("drop");
-
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
 		// when
 		HibernateHelper.exportSchema();
 
-		sqlHelper.run("insert");
+		insertAll();
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		// then
 		assertEquals("should have 3 registers", 3, userList.size());
-
-		sqlHelper.run("drop");
 	}
 
 }

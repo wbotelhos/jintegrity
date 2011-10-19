@@ -1,18 +1,22 @@
 package com.jintegrity.core;
 
-import static com.jintegrity.util.Utils.loadAll;
+import static com.jintegrity.util.Utils.createAll;
+import static com.jintegrity.util.Utils.dropAll;
+import static com.jintegrity.util.Utils.insertAll;
+import static com.jintegrity.util.Utils.loadAllUsers;
+import static com.jintegrity.util.Utils.loadAllContacts;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.jintegrity.core.DbUnitManager;
-import com.jintegrity.core.JIntegrity;
 import com.jintegrity.exception.JIntegrityException;
-import com.jintegrity.helper.SQLHelper;
+import com.jintegrity.model.Contact;
 import com.jintegrity.model.User;
 import com.jintegrity.vendor.Db2DbUnitManager;
 import com.jintegrity.vendor.HsqldbDbUnitManager;
@@ -23,10 +27,18 @@ import com.jintegrity.vendor.PostgresqlDbUnitManager;
 
 public class JIntegrityTest {
 
-	private final SQLHelper sqlHelper = new SQLHelper();
+	@Before
+	public void setup() throws Exception {
+		createAll();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		dropAll();
+	}
 
 	@Test
-	public void shouldHaveJustOneXmlOnProperties() throws Exception { // User
+	public void shouldHaveJustOneXmlOnProperties() throws Exception {
 		// given
 		JIntegrity helper = new JIntegrity();
 
@@ -34,11 +46,11 @@ public class JIntegrityTest {
 		int count = helper.getXmls().length;
 
 		// then
-		assertEquals("should have just 1 xml on properties", 1, count);
+		assertEquals("should have 2 xml on properties", 2, count);
 	}
 
 	@Test
-	public void shouldHaveTheFixedRootPathOnProperties() throws Exception { // 
+	public void shouldHaveTheFixedRootPathOnProperties() throws Exception { 
 		// given
 		JIntegrity helper = new JIntegrity();
 
@@ -46,47 +58,41 @@ public class JIntegrityTest {
 		String path = helper.getPath();
 
 		// then
-		assertEquals("should have the fixed root path", "/", path);
+		assertEquals("should have the fixed root path", "/dataset/", path);
 	}
 
 	@Test
-	public void shouldGetFixedPathAndXmlFromProperties() throws Exception { // /User.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldGetFixedPathAndXmlFromProperties() throws Exception {
 		// given
 		JIntegrity helper = new JIntegrity();
 
 		// when
 		helper.insert();
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 		User second = userList.get(1);
 		User third = userList.get(2);
 
 		// then
-		assertEquals("should be the path from properties", "/", helper.getPath());
+		assertEquals("should be the path from properties", "/dataset/", helper.getPath());
 		assertEquals("should be the xml from properties", "User", helper.getXmls()[0]);
 		assertEquals("should have 3 registers", 3, userList.size());
 		assertEquals("should be the first register", 1, first.getId().intValue());
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
-	public void shouldUseGlobalPathAndXmlFromProperties() throws Exception { // /dataset/User.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldUseGlobalPathAndXmlFromProperties() throws Exception {
 		// given
-		String path = "dataset";
+		String path = "dataset/other";
 
 		// when
 		JIntegrity helper = new JIntegrity();
 		helper.path(path).insert();
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 
 		// then
@@ -94,118 +100,98 @@ public class JIntegrityTest {
 		assertEquals("should have 1 register", 1, userList.size());
 		assertEquals("should be the xml from properties", "User", helper.getXmls()[0]);
 		assertEquals("should be the first register", 11, first.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
-	public void shouldUseGlobalPathAndGlobalXml() throws Exception { // /database/Extra.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldUseGlobalPathAndGlobalXml() throws Exception {
 		// given
-		String path = "dataset";
-		String xml = "Extra";
+		String path = "dataset/other";
+		String xml = "UserPlus";
 
 		// when
 		JIntegrity helper = new JIntegrity();
 		helper.path(path).xml(xml).insert();
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 
 		// then
 		assertEquals("should have 1 xml", 1, helper.getXmls().length);
-		assertEquals("should be the xml from method", "Extra", helper.getXmls()[0]);
+		assertEquals("should be the xml from method", "UserPlus", helper.getXmls()[0]);
 		assertEquals("should have 1 register", 1, userList.size());
 		assertEquals("should be the first register", 22, first.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
-	public void shouldUseGlobalXmlAndPathFromProperties() throws Exception { // /Extra.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldUseGlobalXmlAndPathFromProperties() throws Exception {
 		// given
-		String xml = "Extra";
+		String xml = "UserPlus";
 
 		// when
 		JIntegrity helper = new JIntegrity();
 		helper.xml(xml).insert();
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 
 		// then
 		assertEquals("should have 1 xml", 1, helper.getXmls().length);
-		assertEquals("should be the xml from method", "Extra", helper.getXmls()[0]);
+		assertEquals("should be the xml from method", "UserPlus", helper.getXmls()[0]);
 		assertEquals("should have 1 register", 1, userList.size());
 		assertEquals("should be the first register", 4, first.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
-	public void shouldOverrideTheXmlFromPropertiesWithXmlFromAction() throws Exception { // /Extra.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldOverrideTheXmlFromPropertiesWithXmlFromAction() throws Exception {
 		// given
-		String xml = "Extra";
+		String xml = "UserPlus";
 
 		// when
 		JIntegrity helper = new JIntegrity();
 		helper.insert(xml);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 
 		// then
 		assertEquals("should have 1 xml", 1, helper.getXmls().length);
-		assertEquals("should be the xml from method", "Extra", helper.getXmls()[0]);
+		assertEquals("should be the xml from method", "UserPlus", helper.getXmls()[0]);
 		assertEquals("should have 1 register", 1, userList.size());
 		assertEquals("should be the first register", 4, first.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
-	public void shouldOverrideTheGlobalXmlWithXmlFromAction() throws Exception { // /Extra.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldOverrideTheGlobalXmlWithXmlFromAction() throws Exception {
 		// given
 		String global = "Global";
-		String xml = "Extra";
+		String xml = "UserPlus";
 
 		// when
 		JIntegrity helper = new JIntegrity();
 		helper.xml(global).insert(xml);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 
 		// then
 		assertEquals("should have 1 xml", 1, helper.getXmls().length);
-		assertEquals("should be the xml from method", "Extra", helper.getXmls()[0]);
+		assertEquals("should be the xml from method", "UserPlus", helper.getXmls()[0]);
 		assertEquals("should have 1 register", 1, userList.size());
 		assertEquals("should be the first register", 4, first.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
-	public void shouldOverrideTheGlobalPathAndGlobalXmlWithPathAndXmlFromAction() throws Exception { // /dataset/Extra.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldOverrideTheGlobalPathAndGlobalXmlWithPathAndXmlFromAction() throws Exception {
 		// given
 		String globalPath = "global";
 		String globalXml = "Global";
-		String fullPath = "/dataset/Extra";
+		String fullPath = "/dataset/other/UserPlus";
 
 		// when
 		JIntegrity helper = new JIntegrity();
 		helper.path(globalPath).xml(globalXml).insert(fullPath);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 
 		// then
@@ -214,23 +200,19 @@ public class JIntegrityTest {
 		assertEquals("should be the xml from method", "/" + fullPath, helper.getPath() + helper.getXmls()[0]);
 		assertEquals("should have 1 register", 1, userList.size());
 		assertEquals("should be the first register", 22, first.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
-	public void shouldInserTwoXmlFromAction() throws Exception { // /User.xml and /Extra.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldInserTwoXmlFromAction() throws Exception {
 		// given
 		String firstXML = "User";
-		String secondXML = "Extra";
+		String secondXML = "UserPlus";
 
 		// when
 		JIntegrity helper = new JIntegrity();
 		helper.insert(firstXML, secondXML);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 		User second = userList.get(1);
 		User third = userList.get(2);
@@ -243,23 +225,19 @@ public class JIntegrityTest {
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
 		assertEquals("should be the third register", 4, fourth.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
-	public void shouldUseTwoDiferenteXmlOnMethodWithOneUsingFullyQualifiedPath() throws Exception { // /User.xml and /dataset/Extra.xml
-		sqlHelper.run("drop", "create");
-
+	public void shouldUseTwoDiferenteXmlOnMethodWithOneUsingFullyQualifiedPath() throws Exception {
 		// given
 		String firstXML = "User";
-		String secondXML = "dataset/Extra";
+		String secondXML = "/dataset/other/UserPlus";
 
 		// when
 		JIntegrity helper = new JIntegrity();
 		helper.insert(firstXML, secondXML);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 		User first = userList.get(0);
 		User second = userList.get(1);
 		User third = userList.get(2);
@@ -272,44 +250,40 @@ public class JIntegrityTest {
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
 		assertEquals("should be the third register", 22, fourth.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	// TODO: with 2 xmls on global method
 	// TODO: with 2 xmls on global method with on using fully qualifed path
 	// TODO: with one method getting from properties and other getting from method
 	// TODO: with custom key passed to constructor
-	
+
 	@Test
 	public void shouldDeleteAllByHelper() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
-		String xml = "User";
+		String xml = "Contact";
 
 		// when
 		JIntegrity helper = new JIntegrity().clean(xml);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<Contact> contactList = loadAllContacts(helper.getDbUnitManager());
 
 		// then
-		assertEquals("should have 0 registers", 0, userList.size());
-
-		sqlHelper.run("drop");
+		assertEquals("should have 0 registers", 0, contactList.size());
 	}
 
 	@Test
 	public void shouldCleanAndInsertByHelper() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
-		String xml = "User";
+		String xml = "Contact";
 
 		// when
 		JIntegrity helper = new JIntegrity().cleanAndInsert(xml);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 
 		User first = userList.get(0);
 		User second = userList.get(1);
@@ -320,21 +294,17 @@ public class JIntegrityTest {
 		assertEquals("should be the first register", 1, first.getId().intValue());
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldInsertByHelper() throws Exception {
-		sqlHelper.run("drop", "create");
-
 		// given
 		String xml = "User";
 
 		// when
 		JIntegrity helper = new JIntegrity().insert(xml);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 
 		User first = userList.get(0);
 		User second = userList.get(1);
@@ -345,22 +315,18 @@ public class JIntegrityTest {
 		assertEquals("should be the first register", 1, first.getId().intValue());
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldInsertTwoRegisterByHelper() throws Exception {
-		sqlHelper.run("drop", "create");
-
 		// given
 		String user = "User";
-		String extra = "Extra";
+		String other = "UserPlus";
 
 		// when
-		JIntegrity helper = new JIntegrity().insert(user, extra);
+		JIntegrity helper = new JIntegrity().insert(user, other);
 
-		List<User> userList = loadAll(helper.getDbUnitManager());
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
 
 		User first = userList.get(0);
 		User second = userList.get(1);
@@ -373,8 +339,6 @@ public class JIntegrityTest {
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
 		assertEquals("should be the fourth register", 4, fourth.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test

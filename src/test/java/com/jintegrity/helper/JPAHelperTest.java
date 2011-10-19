@@ -1,5 +1,8 @@
 package com.jintegrity.helper;
 
+import static com.jintegrity.util.Utils.createAll;
+import static com.jintegrity.util.Utils.dropAll;
+import static com.jintegrity.util.Utils.insertAll;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -11,6 +14,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,11 +23,19 @@ import com.jintegrity.model.User;
 
 public class JPAHelperTest {
 
-	private final SQLHelper sqlHelper = new SQLHelper();
-
 	@BeforeClass
 	public static void beforeClass() {
 		JPAHelper.entityManagerFactory("default");
+	}
+
+	@Before
+	public void setup() throws Exception {
+		createAll();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		dropAll();
 	}
 
 	@Test
@@ -65,7 +78,8 @@ public class JPAHelperTest {
 
 	@Test
 	public void shouldLoadAll() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
+
 		JPAHelper.entityManagerFactory("default");
 
 		// given
@@ -86,8 +100,6 @@ public class JPAHelperTest {
 		assertEquals("should be the first register", 1, first.getId().intValue());
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 }

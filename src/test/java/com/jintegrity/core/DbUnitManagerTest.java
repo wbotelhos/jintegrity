@@ -1,6 +1,9 @@
 package com.jintegrity.core;
 
-import static com.jintegrity.util.Utils.loadAll;
+import static com.jintegrity.util.Utils.createAll;
+import static com.jintegrity.util.Utils.dropAll;
+import static com.jintegrity.util.Utils.insertAll;
+import static com.jintegrity.util.Utils.loadAllUsers;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
@@ -10,96 +13,89 @@ import java.sql.PreparedStatement;
 import java.util.List;
 
 import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.jintegrity.exception.JIntegrityException;
-import com.jintegrity.helper.SQLHelper;
 import com.jintegrity.model.PropertiesKey;
 import com.jintegrity.model.User;
 
 public class DbUnitManagerTest {
 
-	private final SQLHelper sqlHelper = new SQLHelper();
+	@Before
+	public void setup() throws Exception {
+		createAll();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		dropAll();
+	}
 
 	@Test
-	public void shouldIgonreTheXmlExtensionIfTheFileHasIt() throws Exception {
-		sqlHelper.run("drop", "create");
-
+	public void shouldIgnoreTheXmlExtensionIfTheFileHasIt() throws Exception {
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User";
+		String xml = "dataset/User";
 
 		// when
 		dbUnitManager.insert(xml);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		// then
 		assertEquals("should have 3 registers", 3, userList.size());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldAppendXmlExtensionIfTheFileNameHasNot() throws Exception {
-		sqlHelper.run("drop", "create");
-
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User";
+		String xml = "dataset/User";
 
 		// when
 		dbUnitManager.insert(xml);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		// then
 		assertEquals("should have 3 registers", 3, userList.size());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldIgnoreTheFirstSlashIfTheFileHasIt() throws Exception {
-		sqlHelper.run("drop", "create");
-
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "/User";
+		String xml = "dataset/User";
 
 		// when
 		dbUnitManager.insert(xml);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		// then
 		assertEquals("should have 3 registers", 3, userList.size());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldPrependTheFirstSlashIfTheFileHasNot() throws Exception {
-		sqlHelper.run("drop", "create");
-
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User";
+		String xml = "dataset/User";
 
 		// when
 		dbUnitManager.insert(xml);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		// then
 		assertEquals("should have 3 registers", 3, userList.size());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
@@ -161,8 +157,6 @@ public class DbUnitManagerTest {
 
 	@Test
 	public void shouldThrowJIntegrityExceptionWhenXmlWasFileNotFound() throws Exception {
-		sqlHelper.run("drop", "create");
-
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 		String xml = "MISSING";
@@ -174,40 +168,32 @@ public class DbUnitManagerTest {
 			// then
 			assertEquals("the file '/MISSING.xml' was not found!", e.getMessage());
 		}
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldWorksWithNoStartSlashOnXMLPath() throws Exception {
-		sqlHelper.run("drop", "create");
-
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User";
+		String xml = "dataset/User";
 
 		// when
 		dbUnitManager.execute(DatabaseOperation.CLEAN_INSERT, xml);
 
 		// then
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldInsert() throws Exception {
-		sqlHelper.run("drop", "create");
-
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User";
+		String xml = "dataset/User";
 
 		// when
 		dbUnitManager.insert(xml);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 		User first = userList.get(0);
 		User second = userList.get(1);
 		User third = userList.get(2);
@@ -217,43 +203,41 @@ public class DbUnitManagerTest {
 		assertEquals("should be the first register", 1, first.getId().intValue());
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldDeleteAll() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User";
+		String contactXML = "dataset/Contact";
+		String userXML = "dataset/User";
 
 		// when
-		dbUnitManager.deleteAll(xml);
+		dbUnitManager.deleteAll(contactXML);
+		dbUnitManager.deleteAll(userXML);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		// then
 		assertEquals("should have 0 registers", 0, userList.size());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldCleanAndInsert() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User";
+		String userXML = "dataset/Contact";
 
 		// when
-		dbUnitManager.cleanAndInsert(xml);
+		dbUnitManager.cleanAndInsert(userXML);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		User first = userList.get(0);
 		User second = userList.get(1);
@@ -264,23 +248,21 @@ public class DbUnitManagerTest {
 		assertEquals("should be the first register", 1, first.getId().intValue());
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldRefresh() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "refresh";
+		String xml = "dataset/refresh";
 
 		// when
 		dbUnitManager.refresh(xml);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		User first = userList.get(0);
 		User second = userList.get(1);
@@ -305,23 +287,21 @@ public class DbUnitManagerTest {
 
 		assertNotNull("should insert the fourth register", fourth);
 		assertEquals("should be the fourth register", 4, fourth.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldUpdate() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "update";
+		String xml = "dataset/update";
 
 		// when
 		dbUnitManager.refresh(xml);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		User first = userList.get(0);
 		User second = userList.get(1);
@@ -346,23 +326,21 @@ public class DbUnitManagerTest {
 
 		assertNotNull("should insert the fourth register", fourth);
 		assertEquals("should be the fourth register", 4, fourth.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	public void shouldDelete() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "delete";
+		String xml = "dataset/delete";
 
 		// when
 		dbUnitManager.delete(xml);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		User first = userList.get(0);
 		User third = userList.get(1);
@@ -372,19 +350,17 @@ public class DbUnitManagerTest {
 
 		assertEquals("should keep the first register", 1, first.getId().intValue());
 		assertEquals("should keep the third register", 3, third.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 	@Test
 	@Ignore // TODO check why trucante don't reset the primary key to zero. Although MySQL do!
 	public void shouldTruncate() throws Exception {
-		sqlHelper.run("drop", "create", "insert");
+		insertAll();
 
 		// given
 		DbUnitManager dbUnitManager = new DbUnitManager();
 
-		String xml = "User";
+		String xml = "dataset/User";
 
 		// when
 		dbUnitManager.truncate(xml);
@@ -399,15 +375,13 @@ public class DbUnitManagerTest {
 			ps.close();
 		}
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		User first = userList.get(0);
 
 		// then
 		assertEquals("should have 1 registers", 1, userList.size());
 		assertEquals("should be the first primary key", 1, first.getId().intValue());
-
-		sqlHelper.run("drop");
 	}
 
 }

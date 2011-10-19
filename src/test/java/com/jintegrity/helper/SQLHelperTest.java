@@ -1,6 +1,6 @@
 package com.jintegrity.helper;
 
-import static com.jintegrity.util.Utils.loadAll;
+import static com.jintegrity.util.Utils.loadAllUsers;
 import static junit.framework.Assert.assertEquals;
 
 import java.util.List;
@@ -18,14 +18,15 @@ public class SQLHelperTest {
 	@Test
 	public void shouldInsert() throws Exception {
 		// given
-		String drop = "drop";
-		String create = "create";
-		String insert = "insert";
+		String dropContact = "sql/drop-contact";
+		String dropUser = "sql/drop-user";
+		String create = "sql/create-user";
+		String insert = "sql/insert-user";
 
 		// when
-		sqlHelper.run(drop, create, insert);
+		sqlHelper.run(dropContact, dropUser, create, insert);
 
-		List<User> userList = loadAll(dbUnitManager);
+		List<User> userList = loadAllUsers(dbUnitManager);
 
 		User first = userList.get(0);
 		User second = userList.get(1);
@@ -37,7 +38,7 @@ public class SQLHelperTest {
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
 
-		sqlHelper.run(drop);
+		sqlHelper.run(dropContact, dropUser);
 	}
 
 }
