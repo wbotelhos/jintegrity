@@ -19,8 +19,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.jintegrity.exception.JIntegrityException;
+import com.jintegrity.model.Contact;
 import com.jintegrity.model.PropertiesKey;
 import com.jintegrity.model.User;
+import com.jintegrity.util.Utils;
 
 public class DbUnitManagerTest {
 
@@ -340,15 +342,15 @@ public class DbUnitManagerTest {
 		// when
 		dbUnitManager.delete(xml);
 
-		List<User> userList = loadAllUsers(dbUnitManager);
+		List<Contact> contactList = Utils.loadAllContacts(dbUnitManager);
 
-		User first = userList.get(0);
-		User third = userList.get(1);
+		Contact first = contactList.get(0);
+		Contact third = contactList.get(1);
 
 		// then
-		assertEquals("should have 2 registers", 2, userList.size());
+		assertEquals("should have 2 registers", 2, contactList.size());
 
-		assertEquals("should keep the first register", 1, first.getId().intValue());
+		assertEquals("should keep the first register", 2, first.getId().intValue());
 		assertEquals("should keep the third register", 3, third.getId().intValue());
 	}
 

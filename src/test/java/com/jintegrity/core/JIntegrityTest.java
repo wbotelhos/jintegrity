@@ -3,8 +3,8 @@ package com.jintegrity.core;
 import static com.jintegrity.util.Utils.createAll;
 import static com.jintegrity.util.Utils.dropAll;
 import static com.jintegrity.util.Utils.insertAll;
-import static com.jintegrity.util.Utils.loadAllUsers;
 import static com.jintegrity.util.Utils.loadAllContacts;
+import static com.jintegrity.util.Utils.loadAllUsers;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -252,10 +252,79 @@ public class JIntegrityTest {
 		assertEquals("should be the third register", 22, fourth.getId().intValue());
 	}
 
-	// TODO: with 2 xmls on global method
-	// TODO: with 2 xmls on global method with on using fully qualifed path
-	// TODO: with one method getting from properties and other getting from method
-	// TODO: with custom key passed to constructor
+	@Test
+	public void shouldUseTwoXmlOnGlobalMethod() throws Exception {
+		// given
+		String firstXML = "User";
+		String secondXML = "UserPlus";
+
+		// when
+		JIntegrity helper = new JIntegrity();
+		helper.xml(firstXML, secondXML).insert();
+
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
+		User first = userList.get(0);
+		User second = userList.get(1);
+		User third = userList.get(2);
+		User fourth = userList.get(3);
+
+		// then
+		assertEquals("should have 2 xml", 2, helper.getXmls().length);
+		assertEquals("should have 4 registers", 4, userList.size());
+		assertEquals("should be the first register", 1, first.getId().intValue());
+		assertEquals("should be the second register", 2, second.getId().intValue());
+		assertEquals("should be the third register", 3, third.getId().intValue());
+		assertEquals("should be the third register", 4, fourth.getId().intValue());
+	}
+
+	@Test
+	public void shouldUseTwoXmlOnGlobalWithOneUsingFullyQualifiedPathMethod() throws Exception {
+		// given
+		String firstXML = "User";
+		String secondXML = "/dataset/other/UserPlus";
+
+		// when
+		JIntegrity helper = new JIntegrity();
+		helper.xml(firstXML, secondXML).insert();
+
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
+		User first = userList.get(0);
+		User second = userList.get(1);
+		User third = userList.get(2);
+		User fourth = userList.get(3);
+
+		// then
+		assertEquals("should have 2 xml", 2, helper.getXmls().length);
+		assertEquals("should have 4 registers", 4, userList.size());
+		assertEquals("should be the first register", 1, first.getId().intValue());
+		assertEquals("should be the second register", 2, second.getId().intValue());
+		assertEquals("should be the third register", 3, third.getId().intValue());
+		assertEquals("should be the third register", 22, fourth.getId().intValue());
+	}
+
+	@Test
+	public void shouldUseXmlFromPropertiesAndOneXmlFromMethod() throws Exception {
+		// given
+		String xml = "UserPlus";
+
+		// when
+		JIntegrity helper = new JIntegrity();
+		helper.insert().insert(xml);
+
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
+		User first = userList.get(0);
+		User second = userList.get(1);
+		User third = userList.get(2);
+		User fourth = userList.get(3);
+
+		// then
+		assertEquals("should have 1 xml on last method", 1, helper.getXmls().length);
+		assertEquals("should have 4 registers", 4, userList.size());
+		assertEquals("should be the first register", 1, first.getId().intValue());
+		assertEquals("should be the second register", 2, second.getId().intValue());
+		assertEquals("should be the third register", 3, third.getId().intValue());
+		assertEquals("should be the third register", 4, fourth.getId().intValue());
+	}
 
 	@Test
 	public void shouldDeleteAllByHelper() throws Exception {
