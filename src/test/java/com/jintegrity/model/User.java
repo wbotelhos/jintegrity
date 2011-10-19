@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class User implements Serializable {
@@ -16,6 +17,9 @@ public class User implements Serializable {
 	private Long id;
 	private String email;
 	private String name;
+
+	@OneToOne(mappedBy = "user")
+	private Contact contact;
 
 	public User() { }
 
@@ -47,6 +51,14 @@ public class User implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Contact getContact() {
+		return contact;
+	}
+
+	public void setContact(Contact contact) {
+		this.contact = contact;
 	}
 
 }
