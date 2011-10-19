@@ -19,7 +19,7 @@ public class JIntegrity {
 
 	private static final Logger LOG = Logger.getLogger(JIntegrity.class);
 
-	private DbUnitManager dbUnitManager = new DbUnitManager();
+	private DbUnitManager dbUnitManager;
 
 	private String path;
 	private String[] xmls;
@@ -44,11 +44,14 @@ public class JIntegrity {
 		loadProperties();
 	}
 
-	public JIntegrity() { }
+	public JIntegrity() {
+		dbUnitManager = new DbUnitManager();
+	}
 
 	public JIntegrity(PropertiesKey propertiesKey) {
 		this.propertiesKey = propertiesKey;
 		LOG.info("custom properties key selected: " + propertiesKey.toString());
+		dbUnitManager = new DbUnitManager(propertiesKey);
 	}
 
 	public JIntegrity keys(PropertiesKey propertiesKey) {
@@ -77,7 +80,6 @@ public class JIntegrity {
 		dbUnitManager = new MySqlDbUnitManager(propertiesKey);
 		return this;
 	}
-
 
 	public JIntegrity useOracle10g() {
 		dbUnitManager = new Oracle10gDbUnitManager(propertiesKey);

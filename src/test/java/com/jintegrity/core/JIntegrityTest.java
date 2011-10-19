@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import com.jintegrity.exception.JIntegrityException;
 import com.jintegrity.model.Contact;
+import com.jintegrity.model.PropertiesKey;
 import com.jintegrity.model.User;
 import com.jintegrity.vendor.Db2DbUnitManager;
 import com.jintegrity.vendor.HsqldbDbUnitManager;
@@ -324,6 +325,29 @@ public class JIntegrityTest {
 		assertEquals("should be the second register", 2, second.getId().intValue());
 		assertEquals("should be the third register", 3, third.getId().intValue());
 		assertEquals("should be the third register", 4, fourth.getId().intValue());
+	}
+
+	@Test
+	public void shouldUseCustomKeys() throws Exception {
+		// given
+		PropertiesKey propertiesKey = new PropertiesKey();
+		propertiesKey.driver("javax.persistence.jdbc.driver").password("javax.persistence.jdbc.password").url("javax.persistence.jdbc.url").user("javax.persistence.jdbc.user");
+
+		// when
+		JIntegrity helper = new JIntegrity(propertiesKey);
+		helper.insert();
+
+		List<User> userList = loadAllUsers(helper.getDbUnitManager());
+		User first = userList.get(0);
+		User second = userList.get(1);
+		User third = userList.get(2);
+
+		// then
+		assertEquals("should have 2 xml", 2, helper.getXmls().length);
+		assertEquals("should have 3 registers", 3, userList.size());
+		assertEquals("should be the first register", 1, first.getId().intValue());
+		assertEquals("should be the second register", 2, second.getId().intValue());
+		assertEquals("should be the third register", 3, third.getId().intValue());
 	}
 
 	@Test
