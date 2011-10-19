@@ -50,14 +50,20 @@ public class Utils {
 
 	public static List<Contact> loadAllContacts(DbUnitManager dbUnitManager) throws SQLException {
 		Connection conn = dbUnitManager.getConnection();
-		PreparedStatement ps = conn.prepareStatement("SELECT id, phone FROM Contact");
+		PreparedStatement ps = conn.prepareStatement("SELECT id, phone, user_id FROM Contact");
 		List<Contact> contactList = new ArrayList<Contact>();
 
 		try {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				contactList.add(new Contact(rs.getLong("id"), rs.getString("phone")));
+				Long userId = rs.getLong("user_id");
+
+				if (userId == null || userId.intValue() == 0) {
+					contactList.add(new Contact(rs.getLong("id"), rs.getString("phone"))); 
+				} else {
+					contactList.add(new Contact(rs.getLong("id"), rs.getString("phone"), userId)); 
+				}
 			}
 		} finally {
 			conn.close();

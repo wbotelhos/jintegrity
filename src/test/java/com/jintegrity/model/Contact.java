@@ -27,6 +27,16 @@ public class Contact implements Serializable {
 		this.phone = phone;
 	}
 
+	public Contact(Long id, String phone, Long userId) {
+		this.id = id;
+		this.phone = phone;
+
+		User user = new User();
+		user.setId(userId);
+
+		this.user = user;
+	}
+
 	public Long getId() {
 		return id;
 	}

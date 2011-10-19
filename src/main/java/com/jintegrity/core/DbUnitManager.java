@@ -19,6 +19,7 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.NoSuchTableException;
+import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 
@@ -105,7 +106,10 @@ public class DbUnitManager {
 			LOG.info("building '" + xml + "'");
 			IDataSet dataSet = builder.build(XMLStream);
 
-			operation.execute(iConn, dataSet);
+			ReplacementDataSet replacement = new ReplacementDataSet(dataSet);
+			replacement.addReplacementObject("null", null);
+
+			operation.execute(iConn, replacement);
 
 			iConn.close();
 		} catch (JIntegrityException e) {

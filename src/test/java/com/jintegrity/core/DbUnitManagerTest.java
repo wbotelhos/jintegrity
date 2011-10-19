@@ -3,9 +3,11 @@ package com.jintegrity.core;
 import static com.jintegrity.util.Utils.createAll;
 import static com.jintegrity.util.Utils.dropAll;
 import static com.jintegrity.util.Utils.insertAll;
+import static com.jintegrity.util.Utils.loadAllContacts;
 import static com.jintegrity.util.Utils.loadAllUsers;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -22,7 +24,6 @@ import com.jintegrity.exception.JIntegrityException;
 import com.jintegrity.model.Contact;
 import com.jintegrity.model.PropertiesKey;
 import com.jintegrity.model.User;
-import com.jintegrity.util.Utils;
 
 public class DbUnitManagerTest {
 
@@ -34,6 +35,29 @@ public class DbUnitManagerTest {
 	@After
 	public void tearDown() throws Exception {
 		dropAll();
+	}
+
+	@Test
+	public void shouldConvertNullStringToNullObjectAndNotSetNullToOthersFks() throws Exception {
+		// given
+		DbUnitManager dbUnitManager = new DbUnitManager();
+
+		String userXML = "dataset/other/User";
+		String contactXML = "dataset/other/ContactNull";
+
+		// when
+		dbUnitManager.insert(userXML);
+		dbUnitManager.insert(contactXML);
+
+		List<Contact> contactList = loadAllContacts(dbUnitManager);
+
+		Contact first = contactList.get(0);
+		Contact second = contactList.get(1);
+
+		// then
+		assertEquals("should have 2 registers", 2, contactList.size());
+		assertNull("should not have a user", first.getUser());
+		assertNotNull("should have a user", second.getUser());
 	}
 
 	@Test
@@ -342,7 +366,7 @@ public class DbUnitManagerTest {
 		// when
 		dbUnitManager.delete(xml);
 
-		List<Contact> contactList = Utils.loadAllContacts(dbUnitManager);
+		List<Contact> contactList = loadAllContacts(dbUnitManager);
 
 		Contact first = contactList.get(0);
 		Contact third = contactList.get(1);
