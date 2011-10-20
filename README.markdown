@@ -8,7 +8,7 @@ The jIntegrity is licensed under [The MIT License](http://www.opensource.org/lic
 
 ## Version
 
-	@version         0.1.0
+	@version         0.1.2
 	@since           2011.09.30
 	@author          Washington Botelho dos Santos
 	@documentation   jintegrity.com/doc
@@ -94,7 +94,7 @@ The jIntegrity is licensed under [The MIT License](http://www.opensource.org/lic
 
 	JIntegrity helper.xml(String xml);
 	JIntegrity helper.path(String path);
-	JIntegrity helper.vendor(String vendor); // * Vendors
+	JIntegrity helper.vendor(String vendor); // Vendors
 	JIntegrity helper.keys(PropertiesKey propertiesKey);
 
 	JIntegrity helper.clean(String... xml);
@@ -107,7 +107,7 @@ The jIntegrity is licensed under [The MIT License](http://www.opensource.org/lic
 	JIntegrity helper.useMySQL();
 	JIntegrity helper.useOracle10g();
 
-	// * Vendors
+	// Vendors
 	JIntegrity.DB2;
 	JIntegrity.HSQL;
 	JIntegrity.MSSQL;
