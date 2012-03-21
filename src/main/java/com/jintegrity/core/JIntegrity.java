@@ -235,7 +235,7 @@ public class JIntegrity {
 
 					if (xmls == null || xmls.isEmpty()) {
 						xmlsFile = new String[] { };
-						LOG.warn("the '" + XML_KEY + "' value was not found on '" + JINTEGRITY_FILE_NAME + "' file!");
+						LOG.warn("No value from '" + XML_KEY + "' was found on '" + JINTEGRITY_FILE_NAME + "' file!");
 					} else {
 						xmlsFile = xmls.split(",");
 						LOG.info("loaded the following xmls: " + xmls.replaceAll(",", ", "));	
